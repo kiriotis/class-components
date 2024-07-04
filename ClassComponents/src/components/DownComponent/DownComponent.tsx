@@ -3,7 +3,6 @@ import { iPerson } from '../../interfaces/start-wars.interface';
 
 export class DownComponent extends Component<{ searchData: iPerson[]; loader: boolean }> {
     render() {
-        console.log('props clg', this.props.loader);
         if (this.props.loader) {
             return (
                 <div className="flex w-5/6 flex-col gap-3 justify-center items-center h-full mb-10 mt-10 bg-gray-500 rounded-xl">

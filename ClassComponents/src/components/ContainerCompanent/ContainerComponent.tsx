@@ -28,7 +28,7 @@ export class ContainerComponent extends Component {
     };
 
     render() {
-        console.log('in render', this.state);
+
         return (
             <div className="flex flex-col w-full h-full justify-center items-center ">
                 <UpComponent
