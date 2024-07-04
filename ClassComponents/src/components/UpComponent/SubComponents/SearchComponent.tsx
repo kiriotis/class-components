@@ -39,8 +39,11 @@ export class SearchComponent extends Component<{
                     type="text"
                     className="w-2/4 rounded-xl p-2"
                 ></input>
-                <button className='p-3 bg-slate-400 rounded-xl text-white' onClick={this.handleAgeChange}>Search</button>
-                <button className='p-3 bg-slate-400 rounded-xl text-white'
+                <button className="p-3 bg-slate-400 rounded-xl text-white" onClick={this.handleAgeChange}>
+                    Search
+                </button>
+                <button
+                    className="p-3 bg-slate-400 rounded-xl text-white"
                     onClick={() => {
                         this.setState({ error: true });
                     }}
