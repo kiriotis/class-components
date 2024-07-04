@@ -1,26 +1,37 @@
 module.exports = {
-    parser: '@typescript-eslint/parser',
-    plugins: ['@typescript-eslint', 'prettier', 'import'],
-    extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended', 'prettier'],
-    parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: 'module',
-    },
-    env: {
-        es6: true,
-        browser: true,
-        node: true,
-    },
-    rules: {
-        '@typescript-eslint/no-explicit-any': 'error',
-        'no-debugger': 'off',
-        'no-console': 0,
-        'class-methods-use-this': 'off',
-        'prettier/prettier': [
-            'error',
-            {
-                endOfLine: 'auto',
-            },
-        ],
-    },
+  env: {
+    browser: true,
+    es2021: true
+  },
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:react/recommended',
+    'plugin:prettier/recommended'
+  ],
+  settings: {
+    react: {
+      version: 'detect'
+    }
+  },
+  overrides: [
+    {
+      env: {
+        node: true
+      },
+      files: ['.eslintrc.{js,cjs}'],
+      parserOptions: {
+        sourceType: 'script'
+      }
+    }
+  ],
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module'
+  },
+  plugins: ['@typescript-eslint', 'react', 'prettier'],
+  rules: {
+    'react/react-in-jsx-scope': 'off'
+  }
 };
