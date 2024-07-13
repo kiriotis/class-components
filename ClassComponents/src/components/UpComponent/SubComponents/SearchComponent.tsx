@@ -1,56 +1,64 @@
-import { Component } from 'react';
-import { iPerson } from '../../../interfaces/start-wars.interface';
+import { useEffect, useState } from 'react';
+import { iWarsResponse } from '../../../interfaces/start-wars.interface';
 import { GetApi } from '../../../services/apiServices';
 import { GetLocalStorage, SetLocalStorage } from '../../../services/localService';
 
-export class SearchComponent extends Component<{
-    changeState: (data: iPerson[]) => void;
+export const SearchComponent = ({
+    changeState,
+    changeStateLoader,
+    changeStateLoaderON,
+}: {
+    changeState: (data: iWarsResponse) => void;
     changeStateLoader: () => void;
     changeStateLoaderON: () => void;
-}> {
-    state = {
-        value: GetLocalStorage(),
-        error: false,
-    };
+}) => {
+    const [value, setValue] = useState(useLocalHook());
+    const [error, setError] = useState(false);
 
-    handleAgeChange = () => {
-        SetLocalStorage('Search', this.state.value);
-        this.props.changeStateLoaderON();
-        GetApi(this.state.value).then((data) => {
-            this.props.changeState(data);
-            this.props.changeStateLoader();
+    function useLocalHook() {
+        useEffect(() => {
+            return () => {
+                SetLocalStorage('Search', value);
+            };
+        });
+        return GetLocalStorage();
+    }
+
+    const handleAgeChange = () => {
+        changeStateLoaderON();
+        GetApi(value).then((data) => {
+            changeState(data);
+            changeStateLoader();
         });
     };
 
-    render() {
-        if (this.state.error) {
-            throw new Error('Big error');
-        }
-        return (
-            <div className="flex flex-row gap-10 w-full justify-around ">
-                <input
-                    onChange={({ target }) => {
-                        this.setState({
-                            value: target.value,
-                        });
-                    }}
-                    defaultValue={this.state.value}
-                    placeholder="Enter search"
-                    type="text"
-                    className="w-2/4 rounded-xl p-2"
-                ></input>
-                <button className="p-3 bg-slate-400 rounded-xl text-white" onClick={this.handleAgeChange}>
-                    Search
-                </button>
-                <button
-                    className="p-3 bg-slate-400 rounded-xl text-white"
-                    onClick={() => {
-                        this.setState({ error: true });
-                    }}
-                >
-                    Make error great again
-                </button>
-            </div>
-        );
-    }
-}
+    return (
+        <div className="flex flex-row gap-10 w-full justify-around ">
+            <input
+                onChange={({ target }) => {
+                    setValue(target.value);
+                }}
+                defaultValue={useLocalHook()}
+                placeholder="Enter search"
+                type="text"
+                className="w-2/4 rounded-xl p-2"
+            ></input>
+            <button className="p-3 bg-slate-400 rounded-xl text-white" onClick={handleAgeChange}>
+                Search
+            </button>
+            <button
+                className="p-3 bg-slate-400 rounded-xl text-white"
+                onClick={() => {
+                    setError(true);
+                }}
+            >
+                Make error great again
+            </button>
+            {error && (
+                <h1 className="m-4 flex flex-col justify-center items-center bg-slate-400 rounded-xl text-white p-4">
+                    Sorry.. there was an error
+                </h1>
+            )}
+        </div>
+    );
+};
