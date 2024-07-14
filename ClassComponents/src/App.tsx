@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import { ContainerComponent } from './components/ContainerCompanent/ContainerComponent';
 import { ErrorPage } from './pages/404/404';
-import '@testing-library/jest-dom';
+
 
 import { Detail } from './pages/detail/detail';
 
