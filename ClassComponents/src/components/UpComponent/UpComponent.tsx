@@ -1,4 +1,4 @@
-import {  iWarsResponse } from '../../interfaces/start-wars.interface';
+import { iWarsResponse } from '../../interfaces/start-wars.interface';
 import { SearchComponent } from './SubComponents/SearchComponent';
 
 export const UpComponent = (props: {

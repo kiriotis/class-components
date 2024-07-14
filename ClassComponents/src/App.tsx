@@ -1,31 +1,18 @@
 import { Route, Routes } from 'react-router-dom';
 import { ContainerComponent } from './components/ContainerCompanent/ContainerComponent';
-import { Layout } from './pages/Layout/Layaout';
 import { ErrorPage } from './pages/404/404';
+import '@testing-library/jest-dom';
 
-// function App() {
-//     return (
-//         <div className="flex flex-col w-screen h-screen items-center gap-4">
-//             <Routes>
-//                 <Route path="/" element={<Layout />}>
-//                     <Route index element={<ContainerComponent />} />
-//                 </Route>
-//                 <Route path="Friends" element={<ContainerComponent />} />
-//             </Routes>
-//         </div>
-//     );
-// }
-
-// export default App;
+import { Detail } from './pages/detail/detail';
 
 function App() {
     return (
         <div className="flex flex-col w-screen h-screen items-center gap-4">
             <Routes>
-                <Route path="/" element={<Layout />}>
-                    <Route index element={<ContainerComponent />} />
-                    <Route path="404" element={<ErrorPage />} />
+                <Route path="/" element={<ContainerComponent />}>
+                    <Route path="detail" element={<Detail />} />
                 </Route>
+                <Route path="404" element={<ErrorPage />} />
             </Routes>
         </div>
     );
