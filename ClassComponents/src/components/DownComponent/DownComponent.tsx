@@ -1,5 +1,7 @@
+import { useContext } from 'react';
 import { Link, Outlet, useSearchParams } from 'react-router-dom';
 import { iWarsResponse } from '../../interfaces/start-wars.interface';
+import { ThemeContext } from '../../thems/ThemeContex';
 import { Checkbox } from '../ChekedComponent/ChekedComponent copy';
 import { DownLoadComponent } from '../DownloadComponent/DownloadComponent';
 
@@ -19,7 +21,7 @@ export const DownComponent = ({
     changeStateLoader,
 }: DownComponentProps) => {
     const [SearchParams, setSearchParams] = useSearchParams({ page: '1', name: 'null' });
-
+    const { theme, setTheme } = useContext(ThemeContext);
     function SetParams(page: string) {
         setSearchParams({ page: page });
     }
@@ -27,7 +29,12 @@ export const DownComponent = ({
     if (searchData) {
         if (loader) {
             return (
-                <div className="flex w-5/6 flex-col gap-3 justify-center items-center h-full mb-10 mt-10 bg-gray-500 rounded-xl">
+                <div
+                    className={
+                        (theme === 'light' ? ' bg-gray-300 ' : ' bg-gray-500 ') +
+                        'flex w-5/6 flex-col gap-3 justify-center items-center h-full mb-10 mt-10 rounded-xl'
+                    }
+                >
                     <svg
                         className="animate-spin w-10"
                         xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +55,12 @@ export const DownComponent = ({
 
         if (searchData.results.length > 0) {
             return (
-                <div className=" relative flex w-5/6 flex-col  justify-center items-center h-full mb-10 mt-10 bg-gray-500 rounded-xl gap-4">
+                <div
+                    className={
+                        (theme === 'light' ? ' bg-gray-300 ' : ' bg-gray-500 ') +
+                        'flex w-5/6 flex-col gap-3 justify-center items-center h-full mb-10 mt-10 rounded-xl'
+                    }
+                >
                     <DownLoadComponent></DownLoadComponent>
                     <div className="flex w-full flex-row justify-center items-center ">
                         <button
@@ -67,7 +79,10 @@ export const DownComponent = ({
                                 {searchData.results.map((el, index) => (
                                     <div
                                         key={index}
-                                        className="flex flex-row w-2/4 justify-center gap-5 rounded-xl  bg-slate-400"
+                                        className={
+                                            (theme === 'light' ? ' bg-slate-500 ' : ' bg-slate-800 ') +
+                                            'flex flex-row w-2/4 justify-center gap-5 rounded-xl  bg-slate-400'
+                                        }
                                     >
                                         <Link
                                             key={index}
@@ -99,8 +114,20 @@ export const DownComponent = ({
             );
         } else {
             return (
-                <div className="flex w-5/6 flex-col gap-3 justify-center items-center h-full mb-10 mt-10 bg-gray-500 rounded-xl">
-                    <div className="w-3/4 bg-slate-400 p-4 rounded-xl flex justify-center text-white">NOT Found</div>
+                <div
+                    className={
+                        (theme === 'light' ? ' bg-gray-300 ' : ' bg-gray-500 ') +
+                        'flex w-5/6 flex-col gap-3 justify-center items-center h-full mb-10 mt-10 rounded-xl'
+                    }
+                >
+                    <div
+                        className={
+                            (theme === 'light' ? ' bg-slate-500 ' : ' bg-slate-800 ') +
+                            'flex justify-center items-center text-white w-2/4 h-20  gap-5 rounded-xl  bg-slate-400'
+                        }
+                    >
+                        NOT Found
+                    </div>
                 </div>
             );
         }
@@ -126,7 +153,12 @@ export const DownComponent = ({
             );
         } else {
             return (
-                <div className="flex w-5/6 flex-col gap-3 justify-center items-center h-full mb-10 mt-10 bg-gray-500 rounded-xl text-white text-5xl">
+                <div
+                    className={
+                        (theme === 'light' ? ' bg-gray-300 ' : ' bg-gray-500 ') +
+                        'flex w-5/6 flex-col gap-3 justify-center items-center h-full mb-10 mt-10 rounded-xl'
+                    }
+                >
                     Enter Your Request
                 </div>
             );

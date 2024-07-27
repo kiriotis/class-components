@@ -1,5 +1,5 @@
-import { iWarsResponse } from '../../interfaces/start-wars.interface';
-import { useSearchMutation } from '../../services/apiServices';
+import { useContext } from 'react';
+import { ThemeContext } from '../../thems/ThemeContex';
 import { SearchComponent } from './SubComponents/SearchComponent';
 
 export const UpComponent = (props: {
@@ -8,11 +8,16 @@ export const UpComponent = (props: {
     changeStateLoader: () => void;
     changeStateLoaderOn: () => void;
 }) => {
+    const { theme, setTheme } = useContext(ThemeContext);
     return (
-        <div className="flex w-5/6 justify-center items-center h-24 mt-10 bg-gray-500 rounded-xl">
+        <div
+            className={
+                (theme === 'light' ? ' bg-gray-300 ' : ' bg-gray-500 ') +
+                'flex w-5/6 justify-center items-center h-24 mt-10  rounded-xl'
+            }
+        >
             <SearchComponent
                 getData={props.getData}
-
                 changeStateLoader={props.changeStateLoader}
                 changeStateLoaderON={props.changeStateLoaderOn}
             />
