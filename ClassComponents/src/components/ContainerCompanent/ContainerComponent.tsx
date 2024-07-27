@@ -1,16 +1,17 @@
 import { useState } from 'react';
-import { iWarsResponse } from '../../interfaces/start-wars.interface';
+import { GetApi, useSearchMutation } from '../../services/apiServices';
 import { DownComponent } from '../DownComponent/DownComponent';
 import { UpComponent } from '../UpComponent/UpComponent';
 
 export function ContainerComponent() {
-    const [ApiData, setApiData] = useState<iWarsResponse>();
     const [loader, setLoader] = useState(false);
+    const [getdata, { data }] = useSearchMutation();
 
-    const ChangeState = (myData: iWarsResponse) => {
-        setApiData(myData);
+    const GetData = (value: string) => {
+        getdata(value).then(() => {
+            setLoader(false);
+        });
     };
-
     const ChangeStateLoader = () => {
         setLoader(false);
     };
@@ -21,14 +22,14 @@ export function ContainerComponent() {
     return (
         <div className="flex flex-col w-full h-full justify-center items-center ">
             <UpComponent
-                changeState={ChangeState}
+                getData={GetData}
                 changeStateLoader={ChangeStateLoader}
                 changeStateLoaderOn={ChangeStateLoaderON}
             />
             <DownComponent
-                searchData={ApiData}
+                searchData={data}
                 loader={loader}
-                changeState={ChangeState}
+                getData={GetData}
                 changeStateLoaderOn={ChangeStateLoaderON}
                 changeStateLoader={ChangeStateLoader}
             />

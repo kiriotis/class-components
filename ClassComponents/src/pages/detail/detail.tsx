@@ -1,21 +1,21 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { iPerson } from '../../interfaces/start-wars.interface';
-import { GetApi } from '../../services/apiServices';
+import {  useSearchMutation } from '../../services/apiServices';
 
 export function Detail() {
-    const [Apidata, setApiData] = useState<iPerson>();
     const [searchParams] = useSearchParams();
-
+    const [getdata, { data }] = useSearchMutation();
     useEffect(() => {
         if (searchParams.get('name')) {
-            GetApi(searchParams.get('name') as string).then((data) => {
-                setApiData(data.results[0]);
-            });
+            getdata(searchParams.get('name') as string);
         }
     }, [searchParams]);
-    if (Apidata) {
-        const dataArray = Object.entries(Apidata);
+    console.log('data', data);
+
+    if (data != undefined) {
+        const dataArray = Object.entries(data.results[0]);
+        console.log(dataArray);
         return (
             <>
                 <div className="flex w-3/5  flex-col gap-4  justify-center items-center h-full mb-10 mt-10 bg-gray-500 rounded-xl text-white text-base overflow-hidden">

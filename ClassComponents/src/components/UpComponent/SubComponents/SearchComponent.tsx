@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react';
 import { iWarsResponse } from '../../../interfaces/start-wars.interface';
-import { GetApi } from '../../../services/apiServices';
+import { GetApi, useSearchMutation } from '../../../services/apiServices';
 import { GetLocalStorage, SetLocalStorage } from '../../../services/localService';
 
 export const SearchComponent = ({
-    changeState,
+
     changeStateLoader,
     changeStateLoaderON,
+    getData,
 }: {
-    changeState: (data: iWarsResponse) => void;
+
     changeStateLoader: () => void;
     changeStateLoaderON: () => void;
+    getData: (value: string) => void;
 }) => {
     const [value, setValue] = useState(useLocalHook());
     const [error, setError] = useState(false);
@@ -24,12 +26,9 @@ export const SearchComponent = ({
         return GetLocalStorage();
     }
 
-    const handleAgeChange = () => {
+    const startSearch = () => {
         changeStateLoaderON();
-        GetApi(value).then((data) => {
-            changeState(data);
-            changeStateLoader();
-        });
+        getData(value);
     };
 
     return (
@@ -43,7 +42,7 @@ export const SearchComponent = ({
                 type="text"
                 className="w-2/4 rounded-xl p-2"
             ></input>
-            <button className="p-3 bg-slate-400 rounded-xl text-white" onClick={handleAgeChange}>
+            <button className="p-3 bg-slate-400 rounded-xl text-white" onClick={startSearch}>
                 Search
             </button>
             <button

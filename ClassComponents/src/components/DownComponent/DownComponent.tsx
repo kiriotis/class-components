@@ -1,11 +1,12 @@
 import { Link, Outlet, useSearchParams } from 'react-router-dom';
 import { iWarsResponse } from '../../interfaces/start-wars.interface';
-import { GetApi } from '../../services/apiServices';
+import { Checkbox } from '../ChekedComponent/ChekedComponent copy';
+import { DownLoadComponent } from '../DownloadComponent/DownloadComponent';
 
 interface DownComponentProps {
     searchData: iWarsResponse | undefined;
     loader: boolean;
-    changeState: (data: iWarsResponse) => void;
+    getData: (value: string) => void;
     changeStateLoaderOn: () => void;
     changeStateLoader: () => void;
 }
@@ -13,7 +14,7 @@ interface DownComponentProps {
 export const DownComponent = ({
     searchData,
     loader,
-    changeState,
+    getData,
     changeStateLoaderOn,
     changeStateLoader,
 }: DownComponentProps) => {
@@ -47,49 +48,45 @@ export const DownComponent = ({
 
         if (searchData.results.length > 0) {
             return (
-                <div className="flex w-5/6 flex-col  justify-center items-center h-full mb-10 mt-10 bg-gray-500 rounded-xl gap-4">
+                <div className=" relative flex w-5/6 flex-col  justify-center items-center h-full mb-10 mt-10 bg-gray-500 rounded-xl gap-4">
+                    <DownLoadComponent></DownLoadComponent>
                     <div className="flex w-full flex-row justify-center items-center ">
                         <button
                             onClick={() => {
                                 if (searchData.previous) {
-                                    PreviousPagination(
-                                        searchData.previous,
-                                        changeState,
-                                        changeStateLoaderOn,
-                                        changeStateLoader,
-                                        SetParams
-                                    );
+                                    PreviousPagination(searchData.previous, getData, changeStateLoaderOn, SetParams);
                                 }
                             }}
                             className="w-10 bg-slate-300 rounded-full p-2 m-2 text-white"
                         >
                             ←
                         </button>
+
                         <div className="flex flex-row w-full">
-                            <Link to={'/'} className="flex flex-col w-full items-center gap-2">
+                            <div className="flex flex-col  w-full items-center  gap-2">
                                 {searchData.results.map((el, index) => (
-                                    <Link
-                                        to={'detail?name=' + el.name}
+                                    <div
                                         key={index}
-                                        className="w-2/4 bg-slate-400 p-4 rounded-xl flex justify-center text-white"
+                                        className="flex flex-row w-2/4 justify-center gap-5 rounded-xl  bg-slate-400"
                                     >
-                                        {el.name}
-                                    </Link>
+                                        <Link
+                                            key={index}
+                                            to={'detail?name=' + el.name}
+                                            className=" p-3  flex justify-end  gap-10 text-white"
+                                        >
+                                            {el.name}
+                                        </Link>
+                                        <Checkbox el={el} />
+                                    </div>
                                 ))}
-                            </Link>
+                            </div>
                             <Outlet />
                         </div>
 
                         <button
                             onClick={() => {
                                 if (searchData.next) {
-                                    NextPagination(
-                                        searchData.next,
-                                        changeState,
-                                        changeStateLoaderOn,
-                                        changeStateLoader,
-                                        SetParams
-                                    );
+                                    NextPagination(searchData.next, getData, changeStateLoaderOn, SetParams);
                                 }
                             }}
                             className=" w-10 bg-slate-300 rounded-full p-2 m-2 text-white"
@@ -139,35 +136,27 @@ export const DownComponent = ({
 
 function NextPagination(
     searchData: string | null,
-    changeState: (data: iWarsResponse) => void,
+    getData: (value: string) => void,
     changeStateLoaderOn: () => void,
-    changeStateLoader: () => void,
     SetParams: (page: string) => void
 ) {
     if (searchData) {
         const page = searchData.split('&')[1];
         SetParams(page.split('=')[1]);
         changeStateLoaderOn();
-        GetApi('&' + page).then((data) => {
-            changeState(data);
-            changeStateLoader();
-        });
+        getData('&' + page);
     }
 }
 function PreviousPagination(
     searchData: string | null,
-    changeState: (data: iWarsResponse) => void,
+    getData: (value: string) => void,
     changeStateLoaderOn: () => void,
-    changeStateLoader: () => void,
     SetParams: (page: string) => void
 ) {
     if (searchData) {
         const page = searchData.split('&')[1];
         SetParams(page.split('=')[1]);
         changeStateLoaderOn();
-        GetApi('&' + page).then((data) => {
-            changeState(data);
-            changeStateLoader();
-        });
+        getData('&' + page);
     }
 }
