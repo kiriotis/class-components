@@ -1,137 +1,158 @@
-import React, { ChangeEvent, FormEvent, useState } from 'react';
 
-interface FormData {
+import React, { ChangeEvent, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from './../../../services/store/Store';
+import { validationSchema } from './../../../services/validation/validation';
+
+interface FormValues {
     name: string;
-    age: string;
+    age: number | '';
     email: string;
     password: string;
     confirmPassword: string;
     gender: string;
-    terms: boolean;
+    acceptTerms: boolean;
     picture: File | null;
     country: string;
 }
 
-const RegistrationForm: React.FC = () => {
-    const [formData, setFormData] = useState<FormData>({
+const DefaultFormComponent: React.FC = () => {
+    const dispatch = useDispatch();
+    const countries = useSelector((state: RootState) => state.formSlice.countries);
+
+    const [formValues, setFormValues] = useState<FormValues>({
         name: '',
         age: '',
         email: '',
         password: '',
         confirmPassword: '',
         gender: '',
-        terms: false,
+        acceptTerms: false,
         picture: null,
         country: '',
     });
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const [errors, setErrors] = useState<Partial<FormValues>>({});
+
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked, files } = e.target;
-        setFormData({
-            ...formData,
-            [name]: type === 'checkbox' ? checked : type === 'file' ? files?.[0] || null : value,
+        setFormValues({
+            ...formValues,
+            [name]: type === 'checkbox' ? checked : type === 'file' ? files![0] : value,
         });
     };
 
-
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await validationSchema.validate(formValues, { abortEarly: false });
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                dispatch({ type: 'SET_PICTURE', payload: reader.result });
+                console.log(formValues);
+            };
+            if (formValues.picture) {
+                reader.readAsDataURL(formValues.picture);
+            }
+        } catch (validationErrors: any) {
+            const formattedErrors: Partial<FormValues> = validationErrors.inner.reduce((acc: any, current: any) => {
+                acc[current.path] = current.message;
+                return acc;
+            }, {});
+            setErrors(formattedErrors);
+        }
+    };
 
     return (
-        <form onSubmit={() => { }} className="flex flex-col  gap-5">
-            <label className="flex justify-between  bg-slate-500 p-4  rounded-2xl">
-                Name:
-                <input type="text" name="name" value={formData.name} onChange={handleChange} />
-            </label>
+        <form onSubmit={handleSubmit}>
+            <div>
+                <label htmlFor="name">Name</label>
+                <input id="name" name="name" value={formValues.name} onChange={handleInputChange} />
+                <p>{errors.name}</p>
+            </div>
 
-            {/* Age */}
-            <label className="bg-slate-500 p-4 gap-5 rounded-2xl flex justify-between">
-                Age:
-                <input type="number" name="age" value={formData.age} onChange={handleChange} />
-            </label>
+            <div>
+                <label htmlFor="age">Age</label>
+                <input id="age" name="age" type="number" value={formValues.age} onChange={handleInputChange} />
+                <p>{errors.age}</p>
+            </div>
 
-            {/* Email */}
-            <label className="bg-slate-500 p-4 gap-5 rounded-2xl flex justify-between">
-                Email:
-                <input type="email" name="email" value={formData.email} onChange={handleChange} />
-            </label>
+            <div>
+                <label htmlFor="email">Email</label>
+                <input id="email" name="email" type="email" value={formValues.email} onChange={handleInputChange} />
+                <p>{errors.email}</p>
+            </div>
 
-            {/* Password */}
-            <label className="bg-slate-500 p-4  rounded-2xl flex justify-between">
-                Password:
-                <input type="password" name="password" value={formData.password} onChange={handleChange} />
-            </label>
-
-            {/* Confirm Password */}
-            <label className="bg-slate-500 p-4  rounded-2xl flex justify-between">
-                Confirm Password:
+            <div>
+                <label htmlFor="password">Password</label>
                 <input
+                    id="password"
+                    name="password"
                     type="password"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
+                    value={formValues.password}
+                    onChange={handleInputChange}
                 />
-            </label>
+                <p>{errors.password}</p>
+            </div>
 
-            {/* Gender */}
-            <label className="bg-slate-500 p-4  rounded-2xl flex justify-between">
-                Gender:
+            <div>
+                <label htmlFor="confirmPassword">Confirm Password</label>
                 <input
-                    type="radio"
-                    name="gender"
-                    value="male"
-                    checked={formData.gender === 'male'}
-                    onChange={handleChange}
-                />{' '}
-                Male
-                <input
-                    type="radio"
-                    name="gender"
-                    value="female"
-                    checked={formData.gender === 'female'}
-                    onChange={handleChange}
-                />{' '}
-                Female
-                <input
-                    type="radio"
-                    name="gender"
-                    value="other"
-                    checked={formData.gender === 'other'}
-                    onChange={handleChange}
-                />{' '}
-                Other
-            </label>
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    value={formValues.confirmPassword}
+                    onChange={handleInputChange}
+                />
+                <p>{errors.confirmPassword}</p>
+            </div>
 
-            {/* Terms and Conditions */}
-            <label className="bg-slate-500 p-4  rounded-2xl flex justify-between">
-                <input type="checkbox" name="terms" checked={formData.terms} onChange={handleChange} />I accept the
-                Terms and Conditions
-            </label>
+            <div>
+                <label>Gender</label>
+                <div>
+                    <input type="radio" id="male" name="gender" value="male" onChange={handleInputChange} />
+                    <label htmlFor="male">Male</label>
+                    <input type="radio" id="female" name="gender" value="female" onChange={handleInputChange} />
+                    <label htmlFor="female">Female</label>
+                </div>
+                <p>{errors.gender}</p>
+            </div>
 
-            {/* Upload Picture */}
-            <label className="w-full bg-slate-500 p-4  rounded-2xl flex justify-between">
-                Upload Picture:
-                <input type="file" name="picture" onChange={handleChange} />
-            </label>
+            <div>
+                <label htmlFor="acceptTerms">
+                    <input
+                        type="checkbox"
+                        id="acceptTerms"
+                        name="acceptTerms"
+                        checked={formValues.acceptTerms}
+                        onChange={handleInputChange}
+                    />
+                    Accept Terms and Conditions
+                </label>
+                <p>{errors.acceptTerms}</p>
+            </div>
 
-            {/* Country */}
-            <label className="w-full bg-slate-500 p-4  rounded-2xl flex justify-between">
-                Country:
-                <input list="countries" name="country" value={formData.country} onChange={handleChange} />
-                <datalist id="countries">
-                    <option value="United States" />
-                    <option value="Canada" />
-                    <option value="United Kingdom" />
-                    <option value="Australia" />
-                    <option value="Germany" />
-                    {/* Add more countries as needed */}
-                </datalist>
-            </label>
+            <div>
+                <label htmlFor="picture">Upload Picture</label>
+                <input id="picture" name="picture" type="file" onChange={handleInputChange} />
+            </div>
 
-            {/* Submit Button */}
-            <button type="submit" className="w-full bg-slate-300 p-4  rounded-2xl flex justify-between">
-                Submit
-            </button>
+            <div>
+                <label htmlFor="country">Country</label>
+                <select id="country" name="country" value={formValues.country} onChange={()=>{}}>
+                    <option value="" disabled>
+                        Select Country
+                    </option>
+                    {countries.map((country, index) => (
+                        <option className='text-black' key={index} value={country.code}></option>
+                    ))}
+                </select>
+                <p>{errors.country}</p>
+            </div>
+
+            <button type="submit">Submit</button>
         </form>
     );
 };
 
-export default RegistrationForm;
+export default DefaultFormComponent;
